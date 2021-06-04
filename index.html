@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="style/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="style/style.css" />
+    <meta name="description" content="Tool for experimenting with bodies in orbit" />
+    <title>Gravity Sandbox</title>
+</head>
+
+<body>
+
+    <div id="help-menu-container">
+        <div id="help-menu">
+            <h1>Gravity Sandbox</h1>
+            <hr />
+            <h2>About</h2>
+            <p>
+                In this physics sandbox, you're able to create orbiting bodies and watch them whirl around the vacuum of space.
+            </p>
+            <h2>Controls</h2>
+            <p>
+                The controls largely revolve around which orbiting body is the active body. The active body will pulse for visual clarity. 
+            </p>
+            <h3>Creating a body</h3>
+            <p>
+                Clicking on empty space without an active body selected will create a new one where you clicked and set
+                it to the active body.
+            </p>
+            <h3>Selecting a body</h3>
+            <p>
+                Click on an orbiting body to select it as the active body.
+                With an active body selected and the game paused, you can edit its properties (such as mass, velocity, radius, etc.) or delete it.
+                Clicking on empty space with a body selected will clear your selection.
+            </p>
+            <h3>Pause/unpause</h3>
+            <p>
+                The simulation can be paused/unpaused using the settings menu. 
+            </p>
+            <button class="btn btn-primary" onclick="toggleHelpMenu()">Get started</button>
+        </div>
+    </div>
+
+    <div id="controls">
+        <label id="label-controls-toggle" for="controls-toggle">
+            <object class="icon" data="res/ico/settings.svg"></object></label>
+        <input style="display: none;" name="controls-toggle" type="checkbox" id="controls-toggle" />
+        <div id="controls-items">
+            <div class="control-item">
+                <label for="config-show-velocity">Velocity markers</label>
+                <input type="checkbox" id="config-show-velocity" checked>
+            </div>
+            <div class="control-item">
+                <label for="config-show-stars">Stars</label>
+                <input type="checkbox" id="config-show-stars" checked>
+            </div>
+            <div class="control-item">
+                <label for="config-paused">Paused</label>
+                <input type="checkbox" id="config-paused" checked>
+            </div>
+            <div class="control-item">
+                <label for="config-speed">Speed</label>
+                <input class="form form-control" type="text" id="config-speed" value="1">
+            </div>
+            <div class="control-item">
+                <label for="config-gravity">Gravity</label>
+                <input class="form form-control" type="text" id="config-gravity" value="1">
+            </div>
+            <div id="config-active-body">
+                <div class="control-item">
+                    <b>Selected body:</b>
+                </div>
+                <div class="control-item">
+                    <label for="active-body-color">Color</label>
+                    <input class="form form-control" type="text" id="active-body-color">
+                </div>
+                <div class="control-item">
+                    <label for="active-body-mass">Mass</label>
+                    <input class="form form-control" type="text" id="active-body-mass">
+                </div>
+                <div class="control-item">
+                    <label for="active-body-radius">Radius</label>
+                    <input class="form form-control" type="text" id="active-body-radius">
+                </div>
+                <div class="control-item">
+                    <label for="active-body-position-x">X</label>
+                    <input class="form form-control" type="text" id="active-body-position-x">
+                </div>
+                <div class="control-item">
+                    <label for="active-body-position-y">Y</label>
+                    <input class="form form-control" type="text" id="active-body-position-y">
+                </div>
+                <div class="control-item">
+                    <label for="active-body-velocity-x">X Vel.</label>
+                    <input class="form form-control" type="text" id="active-body-velocity-x">
+                </div>
+                <div class="control-item">
+                    <label for="active-body-velocity-x">Y Vel.</label>
+                    <input class="form form-control" type="text" id="active-body-velocity-y">
+                </div>
+                <div class="control-item">
+                    <button class="btn btn-danger" id="active-body-delete">Delete</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <script src="script/classes/Body.js"></script>
+    <script src="script/classes/Vector.js"></script>
+    <script src="script/script.js"></script>
+</body>
+
+</html>
