@@ -18,11 +18,13 @@
             <hr />
             <h2>About</h2>
             <p>
-                In this physics sandbox, you're able to create orbiting bodies and watch them whirl around the vacuum of space.
+                In this physics sandbox, you're able to create orbiting bodies and watch them whirl around the vacuum of
+                space.
             </p>
             <h2>Controls</h2>
             <p>
-                The controls largely revolve around which orbiting body is the active body. The active body will pulse for visual clarity. 
+                The controls largely revolve around which orbiting body is the active body. The active body will pulse
+                for visual clarity.
             </p>
             <h3>Creating a body</h3>
             <p>
@@ -32,22 +34,44 @@
             <h3>Selecting a body</h3>
             <p>
                 Click on an orbiting body to select it as the active body.
-                With an active body selected and the game paused, you can edit its properties (such as mass, velocity, radius, etc.) or delete it.
+                With an active body selected and the game paused, you can edit its properties (such as mass, velocity,
+                radius, etc.) or delete it.
                 Clicking on empty space with a body selected will clear your selection.
             </p>
             <h3>Pause/unpause</h3>
             <p>
-                The simulation can be paused/unpaused using the settings menu. 
+                The simulation can be paused/unpaused using the settings menu.
             </p>
             <button class="btn btn-primary" onclick="toggleHelpMenu()">Get started</button>
         </div>
     </div>
 
     <div id="controls">
-        <label id="label-controls-toggle" for="controls-toggle">
-            <object class="icon" data="res/ico/settings.svg"></object></label>
+
+        <label class="icon-label" for="controls-toggle" onclick="pause()">
+            <object class="icon" data="res/ico/settings.svg"></object>
+        </label>
+
+        <label class="icon-label hidden-desktop" onclick="pause()">
+            <object class="icon" id="icon-pause" data="res/ico/pause.svg"></object>
+        </label>
+
+        <label class="icon-label hidden-desktop" onclick="unpause()">
+            <object class="icon" id="icon-play" data="res/ico/play.svg"></object>
+        </label>
+
         <input style="display: none;" name="controls-toggle" type="checkbox" id="controls-toggle" />
-        <div id="controls-items">
+
+        <div id="controls-items" class="hidden">
+
+            <div class="hidden-desktop control-item" style="flex-direction: column; align-items: flex-end;">
+                <button class="btn btn-danger" id="close-config">X</button>
+                <hr />
+            </div>
+
+            <div class="control-item">
+                <b>General Settings</b>
+            </div>
             <div class="control-item">
                 <label for="config-show-velocity">Velocity markers</label>
                 <input type="checkbox" id="config-show-velocity" checked>
@@ -68,9 +92,10 @@
                 <label for="config-gravity">Gravity</label>
                 <input class="form form-control" type="text" id="config-gravity" value="1">
             </div>
+            <hr class="hidden-desktop" />
             <div id="config-active-body">
                 <div class="control-item">
-                    <b>Selected body:</b>
+                    <b>Selected Body</b>
                 </div>
                 <div class="control-item">
                     <label for="active-body-color">Color</label>
@@ -101,7 +126,7 @@
                     <input class="form form-control" type="text" id="active-body-velocity-y">
                 </div>
                 <div class="control-item">
-                    <button class="btn btn-danger" id="active-body-delete">Delete</button>
+                    <button class="btn btn-danger w-100" id="active-body-delete">Delete selected body</button>
                 </div>
             </div>
         </div>
