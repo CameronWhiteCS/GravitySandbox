@@ -24,7 +24,7 @@ toggleHelpMenu = () => {
 const setActiveBody = (body) => {
     state.activeBody = body;
     const configActiveBody = document.getElementById('config-active-body');
-    configActiveBody.style.display = body === null ? 'none' : 'flex'
+    configActiveBody.style.display = (body === null ? 'none' : 'flex');
     if (body !== null) {
         document.getElementById('active-body-color').value = body.color;
         document.getElementById('active-body-mass').value = body.mass;
@@ -164,7 +164,7 @@ const updateState = () => {
 
 const drawBackground = (canvas, context) => {
     context.fillStyle = 'black';
-    context.fillRect(0, 0, canvas.width - 1, canvas.height - 1);
+    context.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 /**
@@ -220,6 +220,11 @@ const pause = () => {
     state.config.paused = true;
 }
 
+const unpause = () => {
+    document.getElementById('config-paused').checked = false;
+    state.config.paused = false;
+}
+
 const animate = () => {
 
     if (!state.config.paused) {
@@ -270,7 +275,7 @@ document.getElementById('canvas').onclick = (e) => {
     const trueY = Math.floor((e.clientY - canvas.getBoundingClientRect().y) * (canvas.height / canvas.getBoundingClientRect().height));
     const truePositiion = new Vector(trueX, trueY);
 
-    let clickedBody;
+    let clickedBody = null;
 
     for (let i = 0; i < state.bodies.length; i++) {
         const body = state.bodies[i];
@@ -278,7 +283,6 @@ document.getElementById('canvas').onclick = (e) => {
             clickedBody = body;
             break;
         }
-        clickedBody = null;
     }
 
     if (clickedBody === null) {
@@ -292,8 +296,8 @@ document.getElementById('canvas').onclick = (e) => {
                 velocity = new Vector(0, 0),
                 color = 'white'
             );
-            setActiveBody(newBody);
             state.bodies.push(newBody);
+            setActiveBody(newBody);
             pause();
         }
     } else {
@@ -334,6 +338,10 @@ document.getElementById('active-body-position-x').onchange = (e) => {
 document.getElementById('active-body-position-y').onchange = (e) => {
     state.activeBody.position.y = parseInt(e.target.value);
 };
+
+document.getElementById('close-config').onclick = (e) => {
+    document.getElementById('controls-toggle').checked = false;
+}
 
 document.getElementById('active-body-delete').onclick = (e) => {
     state.bodies = state.bodies.filter((body) => {
