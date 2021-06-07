@@ -4,12 +4,24 @@ const state = {
     tick: 0,
     activeBody: null,
     config: {
-        drawStars: document.getElementById('config-show-stars').checked,
+        renderStars: document.getElementById('config-show-stars').checked,
         showVelocity: document.getElementById('config-show-velocity').checked,
         speed: document.getElementById('config-speed').value || 1,
         paused: document.getElementById('config-paused').checked,
         gravity: document.getElementById('config-gravity').value || 1
-    }
+    },
+    previousCanvasHeight: 0,
+    previousCanvasWidth: 0
+}
+
+const pause = () => {
+    document.getElementById('config-paused').checked = true;
+    state.config.paused = true;
+}
+
+const unpause = () => {
+    document.getElementById('config-paused').checked = false;
+    state.config.paused = false;
 }
 
 toggleHelpMenu = () => {
@@ -21,6 +33,10 @@ toggleHelpMenu = () => {
     }
 }
 
+/**
+ * Sets the active body and adjusts the UI accordingly. If null, the active body UI is hidden.
+ * @param {?Body} body 
+ */
 const setActiveBody = (body) => {
     state.activeBody = body;
     const configActiveBody = document.getElementById('config-active-body');
@@ -38,6 +54,7 @@ const setActiveBody = (body) => {
 
 /**
  * Calculates the force of gravity between two bodies.
+ * F = (m_1 * m_2 * G) / (d^2) 
  * @param {*} body1 
  * @param {*} body2 
  * @returns {Number}
@@ -47,12 +64,11 @@ const gravity = (body1, body2) => {
     return (state.config.gravity * body1.mass * body2.mass) / (distance * distance);
 }
 
-const initialize = () => {
+const generateStars = () => {
     const canvas = document.getElementById('canvas');
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
     const totalPixels = canvas.width * canvas.height;
     const numStars = Math.floor(totalPixels / 2500);
+    state.stars = [];
     for (let i = 0; i < numStars; i++) {
         state.stars.push(new Body(
             position = new Vector(Math.floor(Math.random() * canvas.width), Math.floor(Math.random() * canvas.height)),
@@ -61,6 +77,16 @@ const initialize = () => {
             velocity = new Vector(0, 0)
         ));
     }
+}
+
+/**
+ * Generates background stars and sets the list of bodies equal to one sun centered on the screen.
+ */
+const initialize = () => {
+    const canvas = document.getElementById('canvas');
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    generateStars();
     state.bodies = [
         new Body(
             position = new Vector(0.50 * canvas.width, 0.5 * canvas.height),
@@ -71,9 +97,14 @@ const initialize = () => {
         )
     ];
     setActiveBody(state.bodies[0]);
+    state.previousCanvasWidth = canvas.getBoundingClientRect().width;
+    state.previousCanvasHeight = canvas.getBoundingClientRect().height;
 
 }
 
+/**
+ * Calculates the updated velocities for all orbiting bodies.
+ */
 const updateVelocities = () => {
     state.bodies.forEach((body1) => {
         state.bodies.forEach((body2) => {
@@ -81,7 +112,7 @@ const updateVelocities = () => {
                 // We only calculate the force of b1 on b2
                 // as the force of b2 on b1 will be calculated
                 // in a future loop.
-                const magnitude = gravity(body1, body2)
+                const magnitude = gravity(body1, body2);
                 const direction = new Vector(body2.position.x - body1.position.x, body2.position.y - body1.position.y).norm();
                 const forceGravity = direction.scale(magnitude);
                 if (body1.mass > 0) {
@@ -93,6 +124,9 @@ const updateVelocities = () => {
     });
 }
 
+/**
+ * Calculates the acceleration of each body and updates their positions according to the equation for gravity. 
+ */
 const updatePositions = () => {
     const canvas = document.getElementById('canvas');
     state.bodies.forEach((body) => {
@@ -105,6 +139,10 @@ const updatePositions = () => {
     });
 }
 
+/**
+ * Combines two bodies that have collided into a single body.
+ * Some energy is lost during this process.
+ */
 const collisionDetection = () => {
 
     const deleted = [];
@@ -148,34 +186,32 @@ const collisionDetection = () => {
 
 }
 
-const deleteRemoteBodies = () => {
-
-}
-
+/**
+ * Updates the game state; equivalent to a traditional "tick" function.
+ */
 const updateState = () => {
     for (let i = 0; i < state.config.speed; i++) {
         updateVelocities();
         updatePositions();
         collisionDetection();
-        deleteRemoteBodies();
     }
     setActiveBody(state.activeBody);
 }
 
-const drawBackground = (canvas, context) => {
+const renderBackground = (canvas, context) => {
     context.fillStyle = 'black';
     context.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 /**
- * Draws the stars (if enabled), the orbiting bodies, and their velocity lines (if enabled)
+ * renders the stars (if enabled), the orbiting bodies, and their velocity lines (if enabled)
  * @param {*} canvas 
  * @param {*} context 
  */
-const drawBodies = (canvas, context) => {
+const renderBodies = (canvas, context) => {
 
     context.lineWidth =  1;
-    if (state.config.drawStars) {
+    if (state.config.renderStars) {
         state.stars.forEach((star) => {
             context.strokeStyle = star.color;
             context.beginPath();
@@ -185,13 +221,13 @@ const drawBodies = (canvas, context) => {
     }
 
     state.bodies.forEach((body) => {
-        //draw body
+        //render body
         context.fillStyle = body.color;
         context.beginPath();
         context.arc(body.position.x, body.position.y, body.radius, 0, 2 * Math.PI, false);
         context.fill();
 
-        //if selected, draw outline
+        //if selected, render outline
         if (state.activeBody === body) {
             context.strokeStyle = body.color
             context.lineWidth = Math.floor(Math.abs(Math.sin(state.tick / 15)) * 10)
@@ -201,7 +237,7 @@ const drawBodies = (canvas, context) => {
 
         }
 
-        //draw velocity indicator
+        //render velocity indicator
         if (state.config.showVelocity) {
             context.strokeStyle = body.color;
             context.lineWidth = 1;
@@ -215,17 +251,7 @@ const drawBodies = (canvas, context) => {
 
 }
 
-const pause = () => {
-    document.getElementById('config-paused').checked = true;
-    state.config.paused = true;
-}
-
-const unpause = () => {
-    document.getElementById('config-paused').checked = false;
-    state.config.paused = false;
-}
-
-const animate = () => {
+const render = () => {
 
     if (!state.config.paused) {
         updateState();
@@ -234,118 +260,14 @@ const animate = () => {
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
 
-    drawBackground(canvas, context);
-    drawBodies(canvas, context);
+    renderBackground(canvas, context);
+    renderBodies(canvas, context);
 
     state.tick++;
     state.tick = state.tick % 100000
 
-    window.requestAnimationFrame(animate);
+    window.requestAnimationFrame(render);
 }
 
 initialize();
-animate();
-
-document.getElementById('config-show-velocity').onchange = (e) => state.config.showVelocity = e.target.checked;
-document.getElementById('config-show-stars').onchange = (e) => state.config.drawStars = e.target.checked;
-document.getElementById('config-paused').onchange = (e) => state.config.paused = e.target.checked;
-
-document.getElementById('config-speed').onkeyup = (e) => {
-    if (isNaN(e.target.value) || e.target.value == undefined || e.target.value == '') {
-        return false;
-    } else {
-        state.config.speed = Math.floor(e.target.value);
-        return true;
-    }
-}
-
-document.getElementById('config-gravity').onkeyup = (e) => {
-    if (isNaN(e.target.value) || e.target.value == undefined || e.target.value == '') {
-        return false;
-    } else {
-        state.config.gravity = e.target.value
-        return true;
-    }
-}
-
-document.getElementById('canvas').onclick = (e) => {
-
-    const canvas = document.getElementById('canvas');
-    const trueX = Math.floor((e.clientX - canvas.getBoundingClientRect().x) * (canvas.width / canvas.getBoundingClientRect().width));
-    const trueY = Math.floor((e.clientY - canvas.getBoundingClientRect().y) * (canvas.height / canvas.getBoundingClientRect().height));
-    const truePositiion = new Vector(trueX, trueY);
-
-    let clickedBody = null;
-
-    for (let i = 0; i < state.bodies.length; i++) {
-        const body = state.bodies[i];
-        if (body.position.distance(truePositiion) <= body.radius) {
-            clickedBody = body;
-            break;
-        }
-    }
-
-    if (clickedBody === null) {
-        if (state.activeBody !== null) {
-            setActiveBody(null);
-        } else {
-            const newBody = new Body(
-                position = new Vector(truePositiion.x, truePositiion.y),
-                mass = 1,
-                radius = 17,
-                velocity = new Vector(0, 0),
-                color = 'white'
-            );
-            state.bodies.push(newBody);
-            setActiveBody(newBody);
-            pause();
-        }
-    } else {
-        setActiveBody(clickedBody);
-    }
-
-
-}
-
-document.getElementById('active-body-color').onchange = (e) => {
-    const blacklist = ['black', 'fff', '#fff', 'ffffff', '#ffffff'];
-    if(!blacklist.includes(e.target.value)) {
-        state.activeBody.color = e.target.value;
-    }
-};
-
-document.getElementById('active-body-mass').onchange = (e) => {
-    state.activeBody.mass = parseInt(e.target.value);
-};
-
-document.getElementById('active-body-radius').onchange = (e) => {
-    state.activeBody.radius = parseInt(e.target.value);
-};
-
-document.getElementById('active-body-velocity-x').onchange = (e) => {
-    state.activeBody.velocity.x = parseFloat(e.target.value);
-};
-
-document.getElementById('active-body-velocity-y').onchange = (e) => {
-    state.activeBody.velocity.y = parseFloat(e.target.value);
-};
-
-document.getElementById('active-body-position-x').onchange = (e) => {
-    state.activeBody.position.x = parseInt(e.target.value);
-    console.log(state.activeBody);
-};
-
-document.getElementById('active-body-position-y').onchange = (e) => {
-    state.activeBody.position.y = parseInt(e.target.value);
-};
-
-document.getElementById('close-config').onclick = (e) => {
-    document.getElementById('controls-toggle').checked = false;
-}
-
-document.getElementById('active-body-delete').onclick = (e) => {
-    state.bodies = state.bodies.filter((body) => {
-        return body !== state.activeBody;
-    });
-    setActiveBody(null);
-};
+render();

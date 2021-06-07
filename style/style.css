@@ -94,6 +94,10 @@ hr {
     width: 75px;
 }
 
+.control-item > input[type="number"] {
+    width: 75px;
+}
+
 .control-item > input[type="checkbox"] {
     width: 20px;
 }
@@ -188,6 +192,10 @@ hr {
     }
 
     .control-item > input[type="text"] {
+        width: 150px;
+    }
+
+    .control-item > input[type="number"] {
         width: 150px;
     }
 
