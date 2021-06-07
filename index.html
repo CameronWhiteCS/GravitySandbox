@@ -72,6 +72,7 @@
             <div class="control-item">
                 <b>General Settings</b>
             </div>
+
             <div class="control-item">
                 <label for="config-show-velocity">Velocity markers</label>
                 <input type="checkbox" id="config-show-velocity" checked>
@@ -86,13 +87,15 @@
             </div>
             <div class="control-item">
                 <label for="config-speed">Speed</label>
-                <input class="form form-control" type="text" id="config-speed" value="1">
+                <input class="form form-control" type="number" id="config-speed" value="1">
             </div>
             <div class="control-item">
                 <label for="config-gravity">Gravity</label>
-                <input class="form form-control" type="text" id="config-gravity" value="1">
+                <input class="form form-control" type="number" id="config-gravity" value="1">
             </div>
+
             <hr class="hidden-desktop" />
+
             <div id="config-active-body">
                 <div class="control-item">
                     <b>Selected Body</b>
@@ -103,32 +106,33 @@
                 </div>
                 <div class="control-item">
                     <label for="active-body-mass">Mass</label>
-                    <input class="form form-control" type="text" id="active-body-mass">
+                    <input class="form form-control" type="number" id="active-body-mass">
                 </div>
                 <div class="control-item">
                     <label for="active-body-radius">Radius</label>
-                    <input class="form form-control" type="text" id="active-body-radius">
+                    <input class="form form-control" type="number" id="active-body-radius">
                 </div>
                 <div class="control-item">
                     <label for="active-body-position-x">X</label>
-                    <input class="form form-control" type="text" id="active-body-position-x">
+                    <input class="form form-control" type="number" id="active-body-position-x">
                 </div>
                 <div class="control-item">
                     <label for="active-body-position-y">Y</label>
-                    <input class="form form-control" type="text" id="active-body-position-y">
+                    <input class="form form-control" type="number" id="active-body-position-y">
                 </div>
                 <div class="control-item">
                     <label for="active-body-velocity-x">X Vel.</label>
-                    <input class="form form-control" type="text" id="active-body-velocity-x">
+                    <input class="form form-control" type="number" id="active-body-velocity-x">
                 </div>
                 <div class="control-item">
                     <label for="active-body-velocity-x">Y Vel.</label>
-                    <input class="form form-control" type="text" id="active-body-velocity-y">
+                    <input class="form form-control" type="number" id="active-body-velocity-y">
                 </div>
                 <div class="control-item">
                     <button class="btn btn-danger w-100" id="active-body-delete">Delete selected body</button>
                 </div>
             </div>
+
         </div>
 
     </div>
@@ -138,6 +142,7 @@
     <script src="script/classes/Body.js"></script>
     <script src="script/classes/Vector.js"></script>
     <script src="script/script.js"></script>
+    <script src="script/events.js"></script>
 </body>
 
 </html>
